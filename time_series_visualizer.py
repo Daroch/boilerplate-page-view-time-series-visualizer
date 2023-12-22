@@ -16,13 +16,14 @@ df_clean = df[condition & condition2]
 def draw_line_plot():
     # Draw line plot
     fig, ax = plt.subplots(figsize=(15,5))  # a figure with a single Axes
-    fig =plt.plot(df_clean.index, df_clean['value'], color='red')
+    fig = plt.plot(df_clean.index, df_clean['value'], color='red')
     ax.set_title('Daily freeCodeCamp Forum Page Views 5/2016-12/2019')
     ax.set_xlabel('Date')
     ax.set_ylabel('Page Views')
+    g = ax.figure
     # Save image and return fig (don't change this part)
-    plt.savefig('line_plot.png')
-    return fig
+    g.savefig('line_plot.png')
+    return g
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
@@ -35,15 +36,17 @@ def draw_bar_plot():
     # Draw bar plot
     fig, ax = plt.subplots(figsize=(7,7))  # a figure with a single Axes
     fig=sns.barplot(x="year",y="value",hue="month",data=df_bar, legend='full',palette='bright',hue_order=[1,2,3,4,5,6,7,8,9,10,11,12])
-    fig=plt.legend(title='Months')
-    fig=fig.figure
+ 
+    labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September','October','November','December']
+    h, l = ax.get_legend_handles_labels()
+    ax.legend(h, labels, title="Months")
     ax.set_title('Daily freeCodeCamp Average Views by month 5/2016-12/2019')
     ax.set_xlabel('Years')
     ax.set_ylabel('Average Page Views')
-
+    g = ax.figure
     # Save image and return fig (don't change this part)
-    fig.savefig('bar_plot.png')
-    return fig
+    g.savefig('bar_plot.png')
+    return g
 
 def draw_box_plot():
     # Prepare data for box plots (this part is done!)
