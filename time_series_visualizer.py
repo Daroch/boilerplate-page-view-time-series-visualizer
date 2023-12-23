@@ -11,6 +11,7 @@ df = pd.read_csv('fcc-forum-pageviews.csv', index_col='date', parse_dates=True)
 condition = df['value'] >= df['value'].quantile(0.025)
 condition2 = df['value'] <= df['value'].quantile(0.975)
 df_clean = df[condition & condition2]
+df=df_clean
 
 
 def draw_line_plot():
@@ -30,23 +31,17 @@ def draw_bar_plot():
     df_bar = df_clean.copy()
     df_bar['month'] = df_bar.index.month
     df_bar['year'] = df_bar.index.year
-    df_bar =df_bar.groupby([df_bar["year"],df_bar["month"]]).mean()
+    df_bar =df_bar.groupby(["year","month"]).mean()
+    df_bar = df_bar.unstack()
 
 
     # Draw bar plot
-    fig, ax = plt.subplots(figsize=(7,7))  # a figure with a single Axes
-    fig=sns.barplot(x="year",y="value",hue="month",data=df_bar, legend='full',palette='bright',hue_order=[1,2,3,4,5,6,7,8,9,10,11,12])
- 
+    fig = df_bar.plot.bar(legend=True, figsize=(15, 5),xlabel='Years',ylabel='Average Page Views').figure
     labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September','October','November','December']
-    h, l = ax.get_legend_handles_labels()
-    ax.legend(h, labels, title="Months")
-    ax.set_title('Daily freeCodeCamp Average Views by month 5/2016-12/2019')
-    ax.set_xlabel('Years')
-    ax.set_ylabel('Average Page Views')
-    g = ax.figure
+    plt.legend(labels, title='Months')
     # Save image and return fig (don't change this part)
-    g.savefig('bar_plot.png')
-    return g
+    fig.savefig('bar_plot.png')
+    return fig
 
 def draw_box_plot():
     # Prepare data for box plots (this part is done!)
@@ -59,18 +54,15 @@ def draw_box_plot():
     fig, axs = plt.subplots(1, 2, figsize=(9,3))  # a figure with a single Axes
     axs[0].set_title('Year-wise Box Plot (Trend)')
     axs[1].set_title('Month-wise Box Plot (Seasonality)')
-    fig = sns.boxplot(x=df_box['year'], hue=df_box['year'],legend=False, y=df_box['value'], ax=axs[0],palette='bright',)
-    fig = sns.boxplot(x=df_box['month'], hue=df_box['month'], legend=False, y=df_box['value'], ax=axs[1], palette='muted',order=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])
-    fig=fig.figure
+    axs[0] = sns.boxplot(x=df_box['year'], hue=df_box['year'],legend=False, y=df_box['value'], ax=axs[0],palette='bright',)
+    axs[1] = sns.boxplot(x=df_box['month'], hue=df_box['month'], legend=False, y=df_box['value'], ax=axs[1], palette='muted',order=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])
     axs[0].set_xlabel('Year')
     axs[0].set_ylabel('Page Views')
     axs[1].set_xlabel('Month')
     axs[1].set_ylabel('Page Views')
-
-
-
-
-
+    axs[0].set_yticks([0,20000,40000,60000,80000,100000,120000,140000,160000,180000,200000])
+    axs[1].set_yticks([0,20000,40000,60000,80000,100000,120000,140000,160000,180000,200000])
+    fig=fig.figure
 
     # Save image and return fig (don't change this part)
     fig.savefig('box_plot.png')
